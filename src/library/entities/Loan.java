@@ -19,7 +19,17 @@ public class Loan implements Serializable, ILoan {
 
         this.state = LoanState.PENDING;
     }
- 
+
+    /**
+     * package-private full stack constructor for testing only.
+     */
+    Loan(IBook book, IPatron patron, int loanId, Date dueDate, LoanState state) {
+         this.book = book;
+         this.patron = patron;
+         this.loanId = loanId;
+         this.dueDate = dueDate;
+         this.state = state;
+     }
     
     @Override
     public int getId() {
