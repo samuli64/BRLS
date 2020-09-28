@@ -95,7 +95,7 @@ class BookTest {
 		// arrange
 		boolean expected = false;
 		// act
-		boolean actual = defaultBook.isOnLoan();
+		boolean actual = defaultBook.isDamaged();
 		// assert
 		assertEquals(expected, actual);
 	}
@@ -106,7 +106,7 @@ class BookTest {
 		IBook damagedBook = new Book(author, title, callNumber, id, IBook.BookState.DAMAGED);
 		boolean expected = true;
 		// act
-		boolean actual = damagedBook.isOnLoan();
+		boolean actual = damagedBook.isDamaged();
 		// assert
 		assertEquals(expected, actual);
 	}
@@ -117,7 +117,7 @@ class BookTest {
 		IBook onLoanBook = new Book(author, title, callNumber, id, IBook.BookState.ON_LOAN);
 		boolean expected = false;
 		// act
-		boolean actual = onLoanBook.isOnLoan();
+		boolean actual = onLoanBook.isDamaged();
 		// assert
 		assertEquals(expected, actual);
 	}
