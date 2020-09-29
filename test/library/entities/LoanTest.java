@@ -35,19 +35,46 @@ class LoanTest {
 	void tearDown() throws Exception {
 	}
 
-	@Test
-	void testCommit() {
-		fail("Not yet implemented");
-	}
 
 	@Test
 	void testCheckOverDue() {
 		fail("Not yet implemented");
 	}
+
+	
+	@Test
+	void commit_WhenStateOverdue_ThrowsException() {
+		// arrange
+		ILoan overdueLoan = new Loan(book, patron, loanId, laterDate, LoanState.OVER_DUE);
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, () -> {overdueLoan.commit(loanId, laterDate);});
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
+	}
+	
+	@Test
+	void commit_WhenStateCurrent_ThrowsException() {
+		// arrange
+		ILoan currentLoan = new Loan(book, patron, loanId, laterDate, LoanState.CURRENT);
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, () -> {currentLoan.commit(loanId, laterDate);});
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
+	}
+	
+	@Test
+	void commit_WhenStateDischarged_ThrowsException() {
+		// arrange
+		ILoan dischargedLoan = new Loan(book, patron, loanId, laterDate, LoanState.DISCHARGED);
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, () -> {dischargedLoan.commit(loanId, laterDate);});
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
+	}
 	
 
 	@Test
-	void testIsOverDue_WhenStateOverdue_ReturnsTrue() {
+	void isOverDue_WhenStateOverdue_ReturnsTrue() {
 		// arrange
 		ILoan overdueLoan = new Loan(book, patron, loanId, laterDate, LoanState.OVER_DUE);
 		boolean expected = true;
@@ -58,7 +85,7 @@ class LoanTest {
 	}
 	
 	@Test
-	void testIsOverDue_WhenStatePending_ReturnsFalse() {
+	void isOverDue_WhenStatePending_ReturnsFalse() {
 		// arrange
 		ILoan pendingLoan = new Loan(book, patron, loanId, laterDate, LoanState.PENDING);
 		boolean expected = false;
@@ -69,7 +96,7 @@ class LoanTest {
 	}
 	
 	@Test
-	void testIsOverDue_WhenStateCurrent_ReturnsFalse() {
+	void isOverDue_WhenStateCurrent_ReturnsFalse() {
 		// arrange
 		ILoan currentLoan = new Loan(book, patron, loanId, laterDate, LoanState.CURRENT);
 		boolean expected = false;
@@ -80,7 +107,7 @@ class LoanTest {
 	}
 	
 	@Test
-	void testIsOverDue_WhenStateDischarged_ReturnsFalse() {
+	void isOverDue_WhenStateDischarged_ReturnsFalse() {
 		// arrange
 		ILoan dischargedLoan = new Loan(book, patron, loanId, laterDate, LoanState.DISCHARGED);
 		boolean expected = false;
