@@ -15,8 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class LoanTest {
 	ILoan loan;
-	//@Mock IBook book;
-	//@Mock IPatron patron;
+	@Mock IBook book;
+	@Mock IPatron patron;
 
 	@BeforeEach
 	void setUp() throws Exception {
