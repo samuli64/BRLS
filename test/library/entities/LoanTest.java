@@ -40,6 +40,18 @@ class LoanTest {
 	void testCheckOverDue() {
 		fail("Not yet implemented");
 	}
+	
+	@Test
+	void commit_WhenStatePending_SetsStateCurrent() {
+		// arrange
+		ILoan pendingLoan = new Loan(book, patron, loanId, laterDate, LoanState.PENDING);
+		boolean expected = true;
+		// act
+		pendingLoan.commit(loanId, laterDate);
+		boolean actual = pendingLoan.isCurrent();
+		// assert
+		assertEquals(expected, actual);
+	}
 
 	
 	@Test

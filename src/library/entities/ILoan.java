@@ -14,6 +14,8 @@ public interface ILoan {
 
     boolean isOverDue();
 
+    boolean isCurrent();
+
     Date getDueDate();
 
     IPatron getPatron();
