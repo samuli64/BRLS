@@ -31,6 +31,19 @@ public class Patron implements Serializable, IPatron {
         this.loans = new HashMap<>();
     }
 
+    /**
+     * package-private full stack constructor for testing only.
+     */
+    Patron(String lastName, String firstName, String email, long phoneNo, int id, PatronState state, Map<Integer, ILoan> loans) {
+         this.lastName = lastName;
+         this.firstName = firstName;
+         this.emailAddress = email;
+         this.phoneNumber = phoneNo;
+         this.id = id;
+         this.state = state;
+         this.loans = loans;
+     }
+
 
     @Override
     public int getId() {
