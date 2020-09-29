@@ -70,6 +70,18 @@ class PatronTest {
 	}
 
 	@Test
+	void hasOverDueLoans_WhenLoansCurrent_CallsEachLoanIsOverdue() {
+		// arrange
+		Mockito.when(loan1.isOverDue()).thenReturn(false);
+		Mockito.when(loan2.isOverDue()).thenReturn(false);
+		// act
+		patron.hasOverDueLoans();
+		// assert
+		Mockito.verify(loan1).isOverDue();
+		Mockito.verify(loan2).isOverDue();
+	}
+
+	@Test
 	void hasOverDueLoans_WhenNoLoans_ReturnsFalse() {
 		// arrange
 		Map<Integer, ILoan> emptyLoans = new HashMap<Integer, ILoan>();
