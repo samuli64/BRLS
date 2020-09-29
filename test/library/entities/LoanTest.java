@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import library.entities.ILoan.LoanState;
 import library.test.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -19,6 +20,7 @@ class LoanTest {
 	ILoan loan;
 	@Mock IBook book;
 	@Mock IPatron patron;
+	int loanId = 1;
 	Date earlierDate;
 	Date laterDate;
 
@@ -42,43 +44,51 @@ class LoanTest {
 	void testCheckOverDue() {
 		fail("Not yet implemented");
 	}
-
-	@Test
-	void testIsOverDue() {
-		fail("Not yet implemented");
-	}
 	
 
 	@Test
 	void testIsOverDue_WhenStateOverdue_ReturnsTrue() {
 		// arrange
+		ILoan overdueLoan = new Loan(book, patron, loanId, laterDate, LoanState.OVER_DUE);
 		boolean expected = true;
 		// act
-		boolean actual = defaultBook.isAvailable();
+		boolean actual = overdueLoan.isOverDue();
 		// assert
 		assertEquals(expected, actual);
 	}
-
-	/*@Test
-	void isAvailable_WhenStateDamaged_ReturnsFalse() {
-		// arrange
-		IBook damagedBook = new Book(author, title, callNumber, id, IBook.BookState.DAMAGED);
-		boolean expected = false;
-		// act
-		boolean actual = damagedBook.isAvailable();
-		// assert
-		assertEquals(expected, actual);
-	}
-
+	
 	@Test
-	void isAvailable_WhenStateOnLoan_ReturnsFalse() {
+	void testIsOverDue_WhenStatePending_ReturnsFalse() {
 		// arrange
-		IBook onLoanBook = new Book(author, title, callNumber, id, IBook.BookState.ON_LOAN);
+		ILoan pendingLoan = new Loan(book, patron, loanId, laterDate, LoanState.PENDING);
 		boolean expected = false;
 		// act
-		boolean actual = onLoanBook.isAvailable();
+		boolean actual = pendingLoan.isOverDue();
 		// assert
-		assertEquals(expected, actual);*/
+		assertEquals(expected, actual);
 	}
+	
+	@Test
+	void testIsOverDue_WhenStateCurrent_ReturnsFalse() {
+		// arrange
+		ILoan currentLoan = new Loan(book, patron, loanId, laterDate, LoanState.CURRENT);
+		boolean expected = false;
+		// act
+		boolean actual = currentLoan.isOverDue();
+		// assert
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void testIsOverDue_WhenStateDischarged_ReturnsFalse() {
+		// arrange
+		ILoan dischargedLoan = new Loan(book, patron, loanId, laterDate, LoanState.DISCHARGED);
+		boolean expected = false;
+		// act
+		boolean actual = dischargedLoan.isOverDue();
+		// assert
+		assertEquals(expected, actual);
+	}
+
 
 }
