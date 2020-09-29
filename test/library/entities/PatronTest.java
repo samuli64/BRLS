@@ -30,6 +30,7 @@ class PatronTest {
 	@Mock ILoan loan1;
 	@Mock ILoan loan2;
 	@Mock ILoan loan3;
+	@Mock Map<Integer, ILoan> mockLoans;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -85,12 +86,39 @@ class PatronTest {
 	void hasOverDueLoans_WhenNoLoans_ReturnsFalse() {
 		// arrange
 		Map<Integer, ILoan> emptyLoans = new HashMap<Integer, ILoan>();
-		patron = new Patron(firstName, lastName, emailAddress, phoneNumber, id, PatronState.CAN_BORROW, emptyLoans);
+		IPatron patronWithNoLoans = new Patron(firstName, lastName, 
+				emailAddress, phoneNumber, id, PatronState.CAN_BORROW, emptyLoans);
 		boolean expected = false;
 		// act
-		boolean actual = patron.hasOverDueLoans();
+		boolean actual = patronWithNoLoans.hasOverDueLoans();
 		// assert
 		assertEquals(expected, actual);
+	}
+
+	@Test
+	void takeOutLoan_PatronBorrowsValidLoan_AddsLoanToLoans() {
+		// arrange
+		int loanId = 1;
+		IPatron validPatron = new Patron(firstName, lastName, 
+				emailAddress, phoneNumber, id, PatronState.CAN_BORROW, mockLoans);
+		Mockito.when(loan1.getId()).thenReturn(loanId);
+		Mockito.when(mockLoans.containsKey(loanId)).thenReturn(false);
+		// act
+		validPatron.takeOutLoan(loan1);
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
+	}
+
+	@Test
+	void takeOutLoan_PatronRestricted_ThrowsException() {
+		// arrange
+		IPatron restrictedPatron = new Patron(firstName, lastName, 
+				emailAddress, phoneNumber, id, PatronState.RESTRICTED, loans);
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> {restrictedPatron.takeOutLoan(loan3);});
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
 	}
 
 }
