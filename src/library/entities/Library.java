@@ -56,11 +56,11 @@ public class Library implements Serializable, ILibrary {
         this.patronHelper = patronHelper;
         this.loanHelper = loanHelper;
         
-        catalog = new HashMap<>();
-        patrons = new HashMap<>();
-        loans = new HashMap<>();
-        currentLoans = new HashMap<>();
-        damagedBooks = new HashMap<>();
+        this.catalog = catalog;
+        this.patrons = patrons;
+        this.loans = loans;
+        this.currentLoans = currentLoans;
+        this.damagedBooks = damagedBooks;
         currentlyIssuingBookId = 1;
         currentlyIssuingPatronId = 1;		
         currentlyIssuingLoanId = 1;		
