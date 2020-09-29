@@ -97,6 +97,11 @@ public class Loan implements Serializable, ILoan {
     }
 
     
+    public boolean isCurrent() {
+        return state == LoanState.CURRENT;
+    }
+
+    
     public String toString() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String dueDateString = sdf.format(dueDate);
