@@ -106,6 +106,21 @@ class PatronTest {
 		// act
 		validPatron.takeOutLoan(loan1);
 		// assert
+		Mockito.verify(mockLoans).put(loanId, loan1);
+	}
+
+	@Test
+	void takeOutLoan_LoanBorrowedTwice_ThrowsException() {
+		// arrange
+		int loanId = 1;
+		IPatron greedyPatron = new Patron(firstName, lastName, 
+				emailAddress, phoneNumber, id, PatronState.CAN_BORROW, mockLoans);
+		Mockito.when(loan1.getId()).thenReturn(loanId);
+		Mockito.when(mockLoans.containsKey(loanId)).thenReturn(true);
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> {greedyPatron.takeOutLoan(loan1);});
+		// assert
 		assertTrue(thrown.getClass().equals(RuntimeException.class));
 	}
 
@@ -117,6 +132,23 @@ class PatronTest {
 		// act
 		RuntimeException thrown = assertThrows(RuntimeException.class, 
 				() -> {restrictedPatron.takeOutLoan(loan3);});
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
+	}
+
+	/**
+	 * Test for valid loan state. Test uses isCurrent() which is not part of specification
+	 * due to the lack of an appropriate method in ILoan.
+	 */
+	@Test
+	void takeOutLoan_LoanStateNotCurrent_ThrowsException() {
+		// arrange
+		int loanId = 3;
+		Mockito.when(loan3.getId()).thenReturn(loanId);
+		Mockito.when(loan3.isCurrent()).thenReturn(false);
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> {patron.takeOutLoan(loan3);});
 		// assert
 		assertTrue(thrown.getClass().equals(RuntimeException.class));
 	}
