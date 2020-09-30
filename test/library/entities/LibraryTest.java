@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
+import static org.mockito.ArgumentMatchers.*;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -156,7 +156,7 @@ class LibraryTest {
 		// act
 		spyLibrary.commitLoan(loan);
 		// assert
-		verify(loan).commit(ArgumentMatchers.anyInt(), ArgumentMatchers.any(Date.class));
+		verify(loan).commit(anyInt(), any(Date.class));
 	}
 
 	@Test
@@ -170,7 +170,7 @@ class LibraryTest {
 		// act
 		spyLibrary.commitLoan(loan);
 		// assert
-		verify(loans).put(ArgumentMatchers.anyInt(), ArgumentMatchers.eq(loan));
+		verify(loans).put(anyInt(), eq(loan));
 	}
 
 	@Test
@@ -187,5 +187,20 @@ class LibraryTest {
 		// assert
 		verify(currentLoans).put(bookId, loan);
 	}
+
+	@Test
+	void commitLoan_InvalidLoan_ThrowsException() {
+		// arrange
+		ILibrary spyLibrary = spy(library);
+		lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
+		doThrow(RuntimeException.class).when(loan).commit(anyInt(), any(Date.class));
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> {spyLibrary.commitLoan(loan);});
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
+	}
+	
+	
 
 }
