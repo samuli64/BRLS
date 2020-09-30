@@ -8,16 +8,19 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Mockito.*;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import library.entities.ILoan.LoanState;
 import library.test.*;
 
 @ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 class LoanTest {
 	ILoan loan;
 	@Mock IBook book;
@@ -28,7 +31,6 @@ class LoanTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
 		earlierDate = TestUtilities.dateOf(2020, 2, 23);
 		laterDate = TestUtilities.dateOf(2020, 2, 24);
 	}
