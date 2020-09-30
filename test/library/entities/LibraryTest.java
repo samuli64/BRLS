@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import static org.mockito.Mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -55,9 +55,9 @@ class LibraryTest {
 	@Test
 	void patronCanBorrow_NoRestrictions_ReturnsTrue() {
 		// arrange
-		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(0);
-		Mockito.when(patron.getFinesPayable()).thenReturn(0.0);
-		Mockito.when(patron.hasOverDueLoans()).thenReturn(false);
+		when(patron.getNumberOfCurrentLoans()).thenReturn(0);
+		when(patron.getFinesPayable()).thenReturn(0.0);
+		when(patron.hasOverDueLoans()).thenReturn(false);
 		boolean expected = true;
 		// act
 		boolean actual = library.patronCanBorrow(patron);
@@ -68,10 +68,10 @@ class LibraryTest {
 	@Test
 	void patronCanBorrow_LoanLimitReached_ReturnsFalse() {
 		// arrange
-		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(ILibrary.LOAN_LIMIT);
+		when(patron.getNumberOfCurrentLoans()).thenReturn(ILibrary.LOAN_LIMIT);
 		
-		Mockito.lenient().when(patron.getFinesPayable()).thenReturn(0.0);
-		Mockito.lenient().when(patron.hasOverDueLoans()).thenReturn(false);
+		lenient().when(patron.getFinesPayable()).thenReturn(0.0);
+		lenient().when(patron.hasOverDueLoans()).thenReturn(false);
 		boolean expected = false;
 		// act
 		boolean actual = library.patronCanBorrow(patron);
@@ -82,9 +82,9 @@ class LibraryTest {
 	@Test
 	void patronCanBorrow_MaxFinesOwedReached_ReturnsFalse() {
 		// arrange
-		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(0);
-		Mockito.when(patron.getFinesPayable()).thenReturn(ILibrary.MAX_FINES_OWED);
-		Mockito.lenient().when(patron.hasOverDueLoans()).thenReturn(false);
+		when(patron.getNumberOfCurrentLoans()).thenReturn(0);
+		when(patron.getFinesPayable()).thenReturn(ILibrary.MAX_FINES_OWED);
+		lenient().when(patron.hasOverDueLoans()).thenReturn(false);
 		boolean expected = false;
 		// act
 		boolean actual = library.patronCanBorrow(patron);
@@ -95,9 +95,9 @@ class LibraryTest {
 	@Test
 	void patronCanBorrow_PatronHasOverDueLoans_ReturnsFalse() {
 		// arrange
-		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(0);
-		Mockito.when(patron.getFinesPayable()).thenReturn(0.0);
-		Mockito.when(patron.hasOverDueLoans()).thenReturn(true);
+		when(patron.getNumberOfCurrentLoans()).thenReturn(0);
+		when(patron.getFinesPayable()).thenReturn(0.0);
+		when(patron.hasOverDueLoans()).thenReturn(true);
 		boolean expected = false;
 		// act
 		boolean actual = library.patronCanBorrow(patron);
@@ -108,10 +108,10 @@ class LibraryTest {
 	@Test
 	void issueLoan_PreconditionsMet_ReturnsValidLoan() {
 		// arrange
-		ILibrary spyLibrary = Mockito.spy(library);
-		Mockito.lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
-		Mockito.lenient().when(book.isAvailable()).thenReturn(true);
-		Mockito.when(loanHelper.makeLoan(book, patron)).thenReturn(loan);
+		ILibrary spyLibrary = spy(library);
+		lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
+		lenient().when(book.isAvailable()).thenReturn(true);
+		when(loanHelper.makeLoan(book, patron)).thenReturn(loan);
 		ILoan expected = loan;
 		// act
 		ILoan actual = spyLibrary.issueLoan(book, patron);
@@ -122,9 +122,9 @@ class LibraryTest {
 	@Test
 	void issueLoan_BookUnavailable_ThrowsException() {
 		// arrange
-		ILibrary spyLibrary = Mockito.spy(library);
-		Mockito.lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
-		Mockito.lenient().when(book.isAvailable()).thenReturn(false);
+		ILibrary spyLibrary = spy(library);
+		lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
+		lenient().when(book.isAvailable()).thenReturn(false);
 		// act
 		RuntimeException thrown = assertThrows(RuntimeException.class, 
 				() -> {spyLibrary.issueLoan(book, patron);});
@@ -135,9 +135,9 @@ class LibraryTest {
 	@Test
 	void issueLoan_PatronCantBorrow_ThrowsException() {
 		// arrange
-		ILibrary spyLibrary = Mockito.spy(library);
-		Mockito.lenient().doReturn(false).when(spyLibrary).patronCanBorrow(patron);
-		Mockito.lenient().when(book.isAvailable()).thenReturn(true);
+		ILibrary spyLibrary = spy(library);
+		lenient().doReturn(false).when(spyLibrary).patronCanBorrow(patron);
+		lenient().when(book.isAvailable()).thenReturn(true);
 		// act
 		RuntimeException thrown = assertThrows(RuntimeException.class, 
 				() -> {spyLibrary.issueLoan(book, patron);});
@@ -146,46 +146,46 @@ class LibraryTest {
 	}
 
 	@Test
-	void commitLoan_validLoan_CallsLoanCommit() {
+	void commitLoan_ValidLoan_CallsLoanCommit() {
 		// arrange
-		ILibrary spyLibrary = Mockito.spy(library);
-		Mockito.lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
-		Mockito.when(loan.getBook()).thenReturn(book);
-		Mockito.when(loan.getPatron()).thenReturn(patron);
-		Mockito.when(book.getId()).thenReturn(1);
+		ILibrary spyLibrary = spy(library);
+		lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
+		when(loan.getBook()).thenReturn(book);
+		when(loan.getPatron()).thenReturn(patron);
+		when(book.getId()).thenReturn(1);
 		// act
 		spyLibrary.commitLoan(loan);
 		// assert
-		Mockito.verify(loan).commit(ArgumentMatchers.anyInt(), ArgumentMatchers.any(Date.class));
+		verify(loan).commit(ArgumentMatchers.anyInt(), ArgumentMatchers.any(Date.class));
 	}
 
 	@Test
-	void commitLoan_validLoan_PutsLoanIntoLoans() {
+	void commitLoan_ValidLoan_PutsLoanIntoLoans() {
 		// arrange
-		ILibrary spyLibrary = Mockito.spy(library);
-		Mockito.lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
-		Mockito.when(loan.getBook()).thenReturn(book);
-		Mockito.when(loan.getPatron()).thenReturn(patron);
-		Mockito.when(book.getId()).thenReturn(1);
+		ILibrary spyLibrary = spy(library);
+		lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
+		when(loan.getBook()).thenReturn(book);
+		when(loan.getPatron()).thenReturn(patron);
+		when(book.getId()).thenReturn(1);
 		// act
 		spyLibrary.commitLoan(loan);
 		// assert
-		Mockito.verify(loans).put(ArgumentMatchers.anyInt(), ArgumentMatchers.eq(loan));
+		verify(loans).put(ArgumentMatchers.anyInt(), ArgumentMatchers.eq(loan));
 	}
 
 	@Test
-	void commitLoan_validLoan_PutsLoanIntoCurrentLoans() {
+	void commitLoan_ValidLoan_PutsLoanIntoCurrentLoans() {
 		// arrange
 		int bookId = 1;
-		ILibrary spyLibrary = Mockito.spy(library);
-		Mockito.lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
-		Mockito.when(loan.getBook()).thenReturn(book);
-		Mockito.when(loan.getPatron()).thenReturn(patron);
-		Mockito.when(book.getId()).thenReturn(bookId);
+		ILibrary spyLibrary = spy(library);
+		lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
+		when(loan.getBook()).thenReturn(book);
+		when(loan.getPatron()).thenReturn(patron);
+		when(book.getId()).thenReturn(bookId);
 		// act
 		spyLibrary.commitLoan(loan);
 		// assert
-		Mockito.verify(currentLoans).put(bookId, loan);
+		verify(currentLoans).put(bookId, loan);
 	}
 
 }
