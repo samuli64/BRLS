@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import static org.mockito.Mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -50,8 +50,8 @@ class PatronTest {
 	@Test
 	void hasOverDueLoans_WhenLoanOverDue_ReturnsTrue() {
 		// arrange
-		Mockito.when(loan1.isOverDue()).thenReturn(false);
-		Mockito.when(loan2.isOverDue()).thenReturn(true);
+		when(loan1.isOverDue()).thenReturn(false);
+		when(loan2.isOverDue()).thenReturn(true);
 		boolean expected = true;
 		// act
 		boolean actual = patron.hasOverDueLoans();
@@ -62,8 +62,8 @@ class PatronTest {
 	@Test
 	void hasOverDueLoans_WhenLoansCurrent_ReturnsFalse() {
 		// arrange
-		Mockito.when(loan1.isOverDue()).thenReturn(false);
-		Mockito.when(loan2.isOverDue()).thenReturn(false);
+		when(loan1.isOverDue()).thenReturn(false);
+		when(loan2.isOverDue()).thenReturn(false);
 		boolean expected = false;
 		// act
 		boolean actual = patron.hasOverDueLoans();
@@ -74,13 +74,13 @@ class PatronTest {
 	@Test
 	void hasOverDueLoans_WhenLoansCurrent_CallsEachLoanIsOverdue() {
 		// arrange
-		Mockito.when(loan1.isOverDue()).thenReturn(false);
-		Mockito.when(loan2.isOverDue()).thenReturn(false);
+		when(loan1.isOverDue()).thenReturn(false);
+		when(loan2.isOverDue()).thenReturn(false);
 		// act
 		patron.hasOverDueLoans();
 		// assert
-		Mockito.verify(loan1).isOverDue();
-		Mockito.verify(loan2).isOverDue();
+		verify(loan1).isOverDue();
+		verify(loan2).isOverDue();
 	}
 
 	@Test
@@ -102,12 +102,12 @@ class PatronTest {
 		int loanId = 1;
 		IPatron validPatron = new Patron(firstName, lastName, 
 				emailAddress, phoneNumber, id, PatronState.CAN_BORROW, mockLoans);
-		Mockito.when(loan1.getId()).thenReturn(loanId);
-		Mockito.when(mockLoans.containsKey(loanId)).thenReturn(false);
+		when(loan1.getId()).thenReturn(loanId);
+		when(mockLoans.containsKey(loanId)).thenReturn(false);
 		// act
 		validPatron.takeOutLoan(loan1);
 		// assert
-		Mockito.verify(mockLoans).put(loanId, loan1);
+		verify(mockLoans).put(loanId, loan1);
 	}
 
 	@Test
@@ -116,8 +116,8 @@ class PatronTest {
 		int loanId = 1;
 		IPatron greedyPatron = new Patron(firstName, lastName, 
 				emailAddress, phoneNumber, id, PatronState.CAN_BORROW, mockLoans);
-		Mockito.when(loan1.getId()).thenReturn(loanId);
-		Mockito.when(mockLoans.containsKey(loanId)).thenReturn(true);
+		when(loan1.getId()).thenReturn(loanId);
+		when(mockLoans.containsKey(loanId)).thenReturn(true);
 		// act
 		RuntimeException thrown = assertThrows(RuntimeException.class, 
 				() -> {greedyPatron.takeOutLoan(loan1);});
@@ -145,8 +145,8 @@ class PatronTest {
 	void takeOutLoan_LoanStateNotCurrent_ThrowsException() {
 		// arrange
 		int loanId = 3;
-		Mockito.when(loan3.getId()).thenReturn(loanId);
-		Mockito.when(loan3.isCurrent()).thenReturn(false);
+		when(loan3.getId()).thenReturn(loanId);
+		when(loan3.isCurrent()).thenReturn(false);
 		// act
 		RuntimeException thrown = assertThrows(RuntimeException.class, 
 				() -> {patron.takeOutLoan(loan3);});

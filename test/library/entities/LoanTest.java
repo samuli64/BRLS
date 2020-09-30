@@ -10,9 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Mockito.*;
-import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -64,7 +62,7 @@ class LoanTest {
 		// act
 		pendingLoan.commit(loanId, laterDate);
 		// assert
-		Mockito.verify(patron).takeOutLoan(pendingLoan);
+		verify(patron).takeOutLoan(pendingLoan);
 	}
 	
 	@Test
@@ -74,7 +72,7 @@ class LoanTest {
 		// act
 		pendingLoan.commit(loanId, laterDate);
 		// assert
-		Mockito.verify(book).borrowFromLibrary();
+		verify(book).borrowFromLibrary();
 	}
 
 	
