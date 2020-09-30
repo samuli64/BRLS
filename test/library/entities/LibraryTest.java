@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -18,6 +19,9 @@ import library.entities.helpers.IPatronHelper;
 
 @ExtendWith(MockitoExtension.class)
 class LibraryTest {
+	/* This class uses some lenient stubbing to avoid issues if a future 
+	 * code refactor tests conditions in a different order
+	 */
 	
 	ILibrary library;
 	@Mock IBookHelper bookHelper;
@@ -42,17 +46,79 @@ class LibraryTest {
 	}
 
 	@Test
-	void testPatronCanBorrow() {
-		fail("Not yet implemented");
+	void patronCanBorrow_NoRestrictions_ReturnsTrue() {
+		// arrange
+		IPatron patron = Mockito.mock(IPatron.class);
+		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(0);
+		Mockito.when(patron.getFinesPayable()).thenReturn(0.0);
+		Mockito.when(patron.hasOverDueLoans()).thenReturn(false);
+		boolean expected = true;
+		// act
+		boolean actual = library.patronCanBorrow(patron);
+		// assert
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void patronCanBorrow_LoanLimitReached_ReturnsFalse() {
+		// arrange
+		IPatron patron = Mockito.mock(IPatron.class);
+		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(ILibrary.LOAN_LIMIT);
+		
+		Mockito.lenient().when(patron.getFinesPayable()).thenReturn(0.0);
+		Mockito.lenient().when(patron.hasOverDueLoans()).thenReturn(false);
+		boolean expected = false;
+		// act
+		boolean actual = library.patronCanBorrow(patron);
+		// assert
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void patronCanBorrow_MaxFinesOwedReached_ReturnsFalse() {
+		// arrange
+		IPatron patron = Mockito.mock(IPatron.class);
+		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(0);
+		Mockito.when(patron.getFinesPayable()).thenReturn(ILibrary.MAX_FINES_OWED);
+		Mockito.lenient().when(patron.hasOverDueLoans()).thenReturn(false);
+		boolean expected = false;
+		// act
+		boolean actual = library.patronCanBorrow(patron);
+		// assert
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void patronCanBorrow_PatronHasOverDueLoans_ReturnsFalse() {
+		// arrange
+		IPatron patron = Mockito.mock(IPatron.class);
+		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(0);
+		Mockito.when(patron.getFinesPayable()).thenReturn(0.0);
+		Mockito.when(patron.hasOverDueLoans()).thenReturn(true);
+		boolean expected = false;
+		// act
+		boolean actual = library.patronCanBorrow(patron);
+		// assert
+		assertEquals(expected, actual);
 	}
 
 	@Test
 	void testIssueLoan() {
+		// arrange
+		
+		// act
+		
+		// assert
 		fail("Not yet implemented");
 	}
 
 	@Test
 	void testCommitLoan() {
+		// arrange
+		
+		// act
+		
+		// assert
 		fail("Not yet implemented");
 	}
 
