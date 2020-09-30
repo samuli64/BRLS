@@ -33,6 +33,8 @@ class LibraryTest {
 	@Mock Map<Integer, ILoan> currentLoans;
 	@Mock Map<Integer, IBook> damagedBooks;
 	
+	@Mock IPatron patron;
+	
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -48,7 +50,6 @@ class LibraryTest {
 	@Test
 	void patronCanBorrow_NoRestrictions_ReturnsTrue() {
 		// arrange
-		IPatron patron = Mockito.mock(IPatron.class);
 		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(0);
 		Mockito.when(patron.getFinesPayable()).thenReturn(0.0);
 		Mockito.when(patron.hasOverDueLoans()).thenReturn(false);
@@ -62,7 +63,6 @@ class LibraryTest {
 	@Test
 	void patronCanBorrow_LoanLimitReached_ReturnsFalse() {
 		// arrange
-		IPatron patron = Mockito.mock(IPatron.class);
 		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(ILibrary.LOAN_LIMIT);
 		
 		Mockito.lenient().when(patron.getFinesPayable()).thenReturn(0.0);
@@ -77,7 +77,6 @@ class LibraryTest {
 	@Test
 	void patronCanBorrow_MaxFinesOwedReached_ReturnsFalse() {
 		// arrange
-		IPatron patron = Mockito.mock(IPatron.class);
 		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(0);
 		Mockito.when(patron.getFinesPayable()).thenReturn(ILibrary.MAX_FINES_OWED);
 		Mockito.lenient().when(patron.hasOverDueLoans()).thenReturn(false);
@@ -91,7 +90,6 @@ class LibraryTest {
 	@Test
 	void patronCanBorrow_PatronHasOverDueLoans_ReturnsFalse() {
 		// arrange
-		IPatron patron = Mockito.mock(IPatron.class);
 		Mockito.when(patron.getNumberOfCurrentLoans()).thenReturn(0);
 		Mockito.when(patron.getFinesPayable()).thenReturn(0.0);
 		Mockito.when(patron.hasOverDueLoans()).thenReturn(true);
