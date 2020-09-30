@@ -112,10 +112,36 @@ class LibraryTest {
 		ILoan expected = loan;
 		// act
 		ILoan actual = spyLibrary.issueLoan(book, patron);
-		
 		// assert
 		assertEquals(expected, actual);
 	}
+
+	@Test
+	void issueLoan_BookUnavailable_ThrowsException() {
+		// arrange
+		ILibrary spyLibrary = Mockito.spy(library);
+		Mockito.lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
+		Mockito.lenient().when(book.isAvailable()).thenReturn(false);
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> {spyLibrary.issueLoan(book, patron);});
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
+	}
+
+	@Test
+	void issueLoan_PatronCantBorrow_ThrowsException() {
+		// arrange
+		ILibrary spyLibrary = Mockito.spy(library);
+		Mockito.lenient().doReturn(false).when(spyLibrary).patronCanBorrow(patron);
+		Mockito.lenient().when(book.isAvailable()).thenReturn(true);
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> {spyLibrary.issueLoan(book, patron);});
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
+	}
+
 
 	@Test
 	void testCommitLoan() {
