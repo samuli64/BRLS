@@ -34,6 +34,8 @@ class LibraryTest {
 	@Mock Map<Integer, IBook> damagedBooks;
 	
 	@Mock IPatron patron;
+	@Mock ILoan loan;
+	@Mock IBook book;
 	
 
 	@BeforeEach
@@ -101,13 +103,18 @@ class LibraryTest {
 	}
 
 	@Test
-	void testIssueLoan() {
+	void issueLoan_PreconditionsMet_ReturnsValidLoan() {
 		// arrange
-		
+		ILibrary spyLibrary = Mockito.spy(library);
+		Mockito.lenient().doReturn(true).when(spyLibrary).patronCanBorrow(patron);
+		Mockito.lenient().when(book.isAvailable()).thenReturn(true);
+		Mockito.when(loanHelper.makeLoan(book, patron)).thenReturn(loan);
+		ILoan expected = loan;
 		// act
+		ILoan actual = spyLibrary.issueLoan(book, patron);
 		
 		// assert
-		fail("Not yet implemented");
+		assertEquals(expected, actual);
 	}
 
 	@Test
