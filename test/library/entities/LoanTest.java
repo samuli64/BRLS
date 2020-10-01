@@ -36,12 +36,6 @@ class LoanTest {
 	@AfterEach
 	void tearDown() throws Exception {
 	}
-
-
-	@Test
-	void testCheckOverDue() {
-		fail("Not yet implemented");
-	}
 	
 	@Test
 	void commit_WhenStatePending_SetsStateCurrent() {

@@ -54,6 +54,7 @@ class LoanBookIntegrationTest {
 		
 		// assert
 		assertEquals(expected, actual);
+		assertTrue(loan.isCurrent());
 	}
 
 	@Test
