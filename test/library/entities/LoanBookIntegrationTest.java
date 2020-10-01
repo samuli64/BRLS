@@ -27,12 +27,13 @@ class LoanBookIntegrationTest {
 	private String author = "Stephen King";
 	private String title = "The Shining";
 	private String callNumber = "call123";
-	private int id = 1;
+	private int bookId = 1;
+	private int loanId = 1;
 	private Date date;
 
 	@BeforeEach
 	void setUp() throws Exception {
-		book = new Book(author, title, callNumber, id);
+		book = new Book(author, title, callNumber, bookId);
 		loan = new Loan(book, patron);
 		date = TestUtilities.dateOf(2020, 2, 24);
 	}
@@ -43,7 +44,31 @@ class LoanBookIntegrationTest {
 
 	@Test
 	void commit_BookAvailable_SetsBookStateOnLoan() {
-		fail("Not yet implemented");
+		// arrange
+		assertTrue(book.isAvailable());
+		boolean expected = true;
+		
+		// act
+		loan.commit(loanId, date);
+		boolean actual = book.isOnLoan();
+		
+		// assert
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void commit_BookOnLoan_ThrowsException() {
+		// arrange
+		book.borrowFromLibrary();
+		assertTrue(book.isOnLoan());
+		
+		
+		// act
+		RuntimeException actual = assertThrows(RuntimeException.class, 
+				() -> { loan.commit(loanId, date); });
+		
+		// assert
+		assertEquals(RuntimeException.class, actual);
 	}
 
 }
