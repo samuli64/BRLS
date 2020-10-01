@@ -5,3 +5,4 @@ testbin/
 .DS_Store
 library.obj
 .project
+/target/

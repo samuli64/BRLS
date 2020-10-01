@@ -44,6 +44,27 @@ public class Library implements Serializable, ILibrary {
         currentlyIssuingPatronId = 1;		
         currentlyIssuingLoanId = 1;		
     }
+    
+    /**
+     * package-private full stack constructor for testing only.
+     */
+    Library(IBookHelper bookHelper, IPatronHelper patronHelper, ILoanHelper loanHelper,
+    		Map<Integer, IBook> catalog, Map<Integer, IPatron> patrons,
+    		Map<Integer, ILoan> loans, Map<Integer, ILoan> currentLoans,
+    		Map<Integer, IBook> damagedBooks) {
+        this.bookHelper = bookHelper;
+        this.patronHelper = patronHelper;
+        this.loanHelper = loanHelper;
+        
+        this.catalog = catalog;
+        this.patrons = patrons;
+        this.loans = loans;
+        this.currentLoans = currentLoans;
+        this.damagedBooks = damagedBooks;
+        currentlyIssuingBookId = 1;
+        currentlyIssuingPatronId = 1;		
+        currentlyIssuingLoanId = 1;		
+    }
 
 	
     private int getNextBookId() {
