@@ -64,11 +64,11 @@ class LoanBookIntegrationTest {
 		
 		
 		// act
-		RuntimeException actual = assertThrows(RuntimeException.class, 
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
 				() -> { loan.commit(loanId, date); });
 		
 		// assert
-		assertEquals(RuntimeException.class, actual);
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
 	}
 
 }
