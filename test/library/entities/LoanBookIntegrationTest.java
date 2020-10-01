@@ -1,0 +1,49 @@
+package library.entities;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Date;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import library.test.TestUtilities;
+
+
+@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
+class LoanBookIntegrationTest {
+	
+	ILoan loan;
+	IBook book;
+	@Mock IPatron patron;
+	
+	private String author = "Stephen King";
+	private String title = "The Shining";
+	private String callNumber = "call123";
+	private int id = 1;
+	private Date date;
+
+	@BeforeEach
+	void setUp() throws Exception {
+		book = new Book(author, title, callNumber, id);
+		loan = new Loan(book, patron);
+		date = TestUtilities.dateOf(2020, 2, 24);
+	}
+
+	@AfterEach
+	void tearDown() throws Exception {
+	}
+
+	@Test
+	void commit_BookAvailable_SetsBookStateOnLoan() {
+		fail("Not yet implemented");
+	}
+
+}
