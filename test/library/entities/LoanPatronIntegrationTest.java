@@ -34,8 +34,8 @@ class LoanPatronIntegrationTest {
 	int loanId = 1;
 	Date earlierDate;
 	Date laterDate;
-	@BeforeEach
 	
+	@BeforeEach
 	void setUp() throws Exception {
 		patron = new Patron(lastName, firstName, emailAddress, phoneNumber, patronId);
 		loan = new Loan(book, patron);
