@@ -1,6 +1,7 @@
 package library.entities;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
@@ -31,13 +32,15 @@ class LoanPatronIntegrationTest {
 	int patronId = 1;
 	int bookId = 1;
 	int loanId = 1;
-	Date date;
+	Date earlierDate;
+	Date laterDate;
 	@BeforeEach
 	
 	void setUp() throws Exception {
 		patron = new Patron(lastName, firstName, emailAddress, phoneNumber, patronId);
 		loan = new Loan(book, patron);
-		date = TestUtilities.dateOf(2020, 2, 24);
+		earlierDate = TestUtilities.dateOf(2020, 2, 23);
+		laterDate = TestUtilities.dateOf(2020, 2, 24);
 	}
 
 	@AfterEach
@@ -53,7 +56,7 @@ class LoanPatronIntegrationTest {
 		boolean expected = true;
 		
 		// act
-		loan.commit(loanId, date);
+		loan.commit(loanId, earlierDate);
 		boolean actual = patron.getLoans().contains(loan);
 		
 		// assert
@@ -69,7 +72,7 @@ class LoanPatronIntegrationTest {
 		
 		// act
 		RuntimeException thrown = assertThrows(RuntimeException.class, 
-				() -> { loan.commit(loanId, date); });
+				() -> { loan.commit(loanId, earlierDate); });
 		
 		// assert
 		assertTrue(thrown.getClass().equals(RuntimeException.class));
@@ -84,10 +87,38 @@ class LoanPatronIntegrationTest {
 		
 		// act
 		assertThrows(RuntimeException.class, 
-				() -> { loan.commit(loanId, date); });
+				() -> { loan.commit(loanId, earlierDate); });
 		
 		// assert
 		assertTrue(book.isOnLoan());
+	}
+
+	@Test
+	void hasOverDueLoans_WhenLoanOverDue_ReturnsTrue() {
+		// arrange
+		loan.commit(loanId, earlierDate);
+		loan.checkOverDue(laterDate);
+		assertTrue(loan.isOverDue());
+		assertTrue(patron.getLoans().contains(loan));
+		boolean expected = true;
+		// act
+		boolean actual = patron.hasOverDueLoans();
+		// assert
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void hasOverDueLoans_WhenLoansCurrent_ReturnsFalse() {
+		// arrange
+		loan.commit(loanId, laterDate);
+		loan.checkOverDue(earlierDate);
+		assertFalse(loan.isOverDue());
+		assertTrue(patron.getLoans().contains(loan));
+		boolean expected = false;
+		// act
+		boolean actual = patron.hasOverDueLoans();
+		// assert
+		assertEquals(expected, actual);
 	}
 
 }
