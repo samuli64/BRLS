@@ -79,6 +79,11 @@ public class Patron implements Serializable, IPatron {
     public double getFinesPayable() {
         return finesPayable;
     }
+    
+    /* package-private getter for testing */
+    PatronState getState() {
+    	return this.state;
+    }
 
 
     @Override
