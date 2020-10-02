@@ -72,4 +72,19 @@ class LoanBookIntegrationTest {
 		assertTrue(thrown.getClass().equals(RuntimeException.class));
 	}
 
+	@Test
+	void commit_BookOnLoan_StateUnchanged() {
+		// arrange
+		book.borrowFromLibrary();
+		assertTrue(book.isOnLoan());
+		assertTrue(loan.isPending());
+		
+		// act
+		assertThrows(RuntimeException.class, 
+				() -> { loan.commit(loanId, date); });
+		
+		// assert
+		assertTrue(loan.isPending());
+	}
+
 }
