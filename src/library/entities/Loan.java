@@ -100,6 +100,10 @@ public class Loan implements Serializable, ILoan {
     public boolean isCurrent() {
         return state == LoanState.CURRENT;
     }
+    
+    public boolean isPending() {
+        return state == LoanState.PENDING;
+    }
 
     
     public String toString() {
