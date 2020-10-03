@@ -136,6 +136,11 @@ public class BorrowBookControl implements IBorrowBookControl {
     List<ILoan> getPendingLoans() {
     	return pendingLoans;
     }
+
+    /*package-private method for testing*/
+    IPatron getCurrentPatron() {
+    	return currentPatron;
+    }
 	
     @Override
     public void cancel() {
