@@ -248,6 +248,17 @@ class LoanTest {
 		// assert
 		assertEquals(expected, actual);
 	}
+	
+	@Test
+	void getBook_WhenHasValidBook_ReturnsBook() {
+		// arrange
+		loan = new Loan(book, patron);
+		IBook expected = book;
+		// act
+		IBook actual = loan.getBook();
+		// assert
+		assertEquals(expected, actual);
+	}
 
 
 }
