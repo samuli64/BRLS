@@ -127,6 +127,15 @@ public class BorrowBookControl implements IBorrowBookControl {
         controlState = BorrowControlState.COMPLETED;
     }
 
+    /*package-private method for testing*/
+    BorrowControlState getState() {
+    	return controlState;
+    }
+
+    /*package-private method for testing*/
+    List<ILoan> getPendingLoans() {
+    	return pendingLoans;
+    }
 	
     @Override
     public void cancel() {
