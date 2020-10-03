@@ -201,6 +201,87 @@ class LibraryTest {
 		assertTrue(thrown.getClass().equals(RuntimeException.class));
 	}
 	
-	
+
+	@Test
+	void getBookById_MatchingBook_ReturnsBook() {
+		// arrange
+		int bookId = 1;
+		when(catalog.containsKey(bookId)).thenReturn(true);
+		when(catalog.get(bookId)).thenReturn(book);
+		// act
+		IBook actual = library.getBookById(bookId);
+		// assert
+		assertEquals(book, actual);
+	}
+
+	@Test
+	void getBookById_NoMatchingBook_ReturnsNull() {
+		// arrange
+		int bookId = 1;
+		when(catalog.containsKey(anyInt())).thenReturn(false);
+		// act
+		IBook actual = library.getBookById(bookId);
+		// assert
+		assertNull(actual);
+	}
+
+	@Test
+	void getPatronById_MatchingPatron_ReturnsPatron() {
+		// arrange
+		int patronId = 1;
+		when(patrons.containsKey(patronId)).thenReturn(true);
+		when(patrons.get(patronId)).thenReturn(patron);
+		// act
+		IPatron actual = library.getPatronById(patronId);
+		// assert
+		assertEquals(patron, actual);
+	}
+
+	@Test
+	void getPatronById_NoMatchingPatron_ReturnsNull() {
+		// arrange
+		int patronId = 1;
+		when(patrons.containsKey(patronId)).thenReturn(false);
+		// act
+		IPatron actual = library.getPatronById(patronId);
+		// assert
+		assertNull(actual);
+	}
+
+	@Test
+	void patronWillReachLoanMax_HasNoLoanWillNotReachMax_ReturnsFalse() {
+		// arrange
+		int newLoans = ILibrary.LOAN_LIMIT - 1;
+		when(patron.getNumberOfCurrentLoans()).thenReturn(0);
+		boolean expected = false;
+		// act
+		boolean actual = library.patronWillReachLoanMax(patron, newLoans);
+		// assert
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void patronWillReachLoanMax_HasOneLoanWillReachMax_ReturnsTrue() {
+		// arrange
+		int newLoans = ILibrary.LOAN_LIMIT - 1;
+		when(patron.getNumberOfCurrentLoans()).thenReturn(1);
+		boolean expected = true;
+		// act
+		boolean actual = library.patronWillReachLoanMax(patron, newLoans);
+		// assert
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void patronWillReachLoanMax_HasOneLoanWillExceedMax_ReturnsTrue() {
+		// arrange
+		int newLoans = ILibrary.LOAN_LIMIT;
+		when(patron.getNumberOfCurrentLoans()).thenReturn(1);
+		boolean expected = true;
+		// act
+		boolean actual = library.patronWillReachLoanMax(patron, newLoans);
+		// assert
+		assertEquals(expected, actual);
+	}
 
 }
