@@ -1,10 +1,18 @@
 package library.entities;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 import java.util.Date;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import library.entities.IPatron.PatronState;
 import library.entities.helpers.*;
 import library.test.TestUtilities;
 
@@ -115,13 +124,72 @@ class LibraryIntegrationTest {
 	}
 
 	@Test
-	void testIssueLoan() {
-		fail("Not yet implemented");
+	void issueLoan_PreconditionsMet_ReturnsValidLoan() {
+		// arrange
+		boolean expected = true;
+		// act
+		ILoan actual = library.issueLoan(book, patron);
+		// assert
+		assertEquals(book, actual.getBook());
+		assertEquals(patron, actual.getPatron());
+		assertEquals(expected, actual.isPending());
 	}
 
 	@Test
-	void testCommitLoan() {
-		fail("Not yet implemented");
+	void issueLoan_BookUnavailable_ThrowsException() {
+		// arrange
+		book.borrowFromLibrary();
+		assertFalse(book.isAvailable());
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> {library.issueLoan(book, patron);});
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
+	}
+
+	@Test
+	void issueLoan_PatronCantBorrow_ThrowsException() {
+		// arrange
+		patron.restrictBorrowing();
+		assertEquals(((Patron) patron).getState(), PatronState.RESTRICTED);
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> {library.issueLoan(book, patron);});
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
+	}
+
+	@Test
+	void commitLoan_ValidLoan_PutsLoanIntoCurrentLoans() {
+		// arrange
+		assertTrue(loan.isPending());
+		assertTrue(loan.isPending());
+		List<ILoan> currentLoans = library.getCurrentLoansList();
+		assertFalse(currentLoans.contains(loan));
+		List<ILoan> patronLoans = patron.getLoans();
+		assertFalse(patronLoans.contains(loan));
+		// act
+		library.commitLoan(loan);
+		// assert
+		assertTrue(currentLoans.contains(loan));
+		assertTrue(patronLoans.contains(loan));
+		assertTrue(loan.isCurrent());
+	}
+
+	@Test
+	void commitLoan_InvalidLoan_ThrowsException() {
+		// arrange
+		IPatron mockPatron = mock(Patron.class);
+		IBook mockBook = mock(Book.class);
+		ILoan invalidLoan = new Loan(mockBook, mockPatron);
+		invalidLoan.commit(loanId, earlierDate);
+		assertFalse(invalidLoan.isPending());
+		
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> {library.commitLoan(invalidLoan);});
+		// assert
+		assertTrue(thrown.getClass().equals(RuntimeException.class));
 	}
 
 }
