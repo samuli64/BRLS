@@ -361,7 +361,24 @@ class BorrowBookControlIntegrationTest {
 		// assert
 		assertEquals(IBorrowBookControl.BorrowControlState.SCANNING, state);
 	}
+	
+	@Test
+	void bookScanned_NotInStateScanning_ThrowsException() {
+		// arrange
+		int theHobbitId = bookTheHobbit.getId();
+		IBorrowBookControl.BorrowControlState state = ((BorrowBookControl) borrowBookControl).getState();
+		assertNotEquals(IBorrowBookControl.BorrowControlState.SCANNING, state);
 
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> { borrowBookControl.bookScanned(theHobbitId); });
+		
+		// assert
+		assertEquals(RuntimeException.class, thrown);
+	}
+
+	
+	
 	@Test
 	void testCommitLoans() {
 		// arrange
