@@ -101,6 +101,12 @@ public class Library implements Serializable, ILibrary {
 
 
     @Override
+    public List<ILoan> getAllLoansList() {
+        return new ArrayList<ILoan>(loans.values());
+    }
+
+
+    @Override
     public IPatron addPatron(String lastName, String firstName, String email, long phoneNo) {
         int patronId = getNextPatronId();
         
@@ -271,6 +277,4 @@ public class Library implements Serializable, ILibrary {
         setPatronBorrowingRestrictions(patron);        
         return change;
     }
-
-
 }

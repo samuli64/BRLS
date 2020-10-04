@@ -20,6 +20,8 @@ public interface ILibrary {
     List<IBook> getBookList();
 
     List<ILoan> getCurrentLoansList();
+
+    List<ILoan> getAllLoansList();
     
     IPatron getPatronById(int patronId);
 

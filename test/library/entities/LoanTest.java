@@ -36,12 +36,6 @@ class LoanTest {
 	@AfterEach
 	void tearDown() throws Exception {
 	}
-
-
-	@Test
-	void testCheckOverDue() {
-		fail("Not yet implemented");
-	}
 	
 	@Test
 	void commit_WhenStatePending_SetsStateCurrent() {
@@ -251,6 +245,17 @@ class LoanTest {
 		boolean expected = false;
 		// act
 		boolean actual = dischargedLoan.isOverDue();
+		// assert
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void getBook_WhenHasValidBook_ReturnsBook() {
+		// arrange
+		loan = new Loan(book, patron);
+		IBook expected = book;
+		// act
+		IBook actual = loan.getBook();
 		// assert
 		assertEquals(expected, actual);
 	}
