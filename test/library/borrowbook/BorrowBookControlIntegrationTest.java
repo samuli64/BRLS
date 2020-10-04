@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import static org.mockito.Mockito.*;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -374,19 +373,293 @@ class BorrowBookControlIntegrationTest {
 				() -> { borrowBookControl.bookScanned(theHobbitId); });
 		
 		// assert
-		assertEquals(RuntimeException.class, thrown);
+		assertEquals(RuntimeException.class, thrown.getClass());
 	}
-
 	
 	
 	@Test
-	void testCommitLoans() {
+	void commitLoans_ValidPreconditions_SetsStateCompleted() {
 		// arrange
+		int patronId = patron.getId();
+		borrowBookControl.cardSwiped(patronId);
+		int theHobbitId = bookTheHobbit.getId();
+		borrowBookControl.bookScanned(theHobbitId);
+		borrowBookControl.borrowingCompleted();
+		BorrowBookControl controlImpl = (BorrowBookControl) borrowBookControl;
+		IBorrowBookControl.BorrowControlState state = controlImpl.getState();
+		IPatron patronRef = controlImpl.getCurrentPatron();
+		List<ILoan> pendingLoans = controlImpl.getPendingLoans();
 		
+		
+		assertEquals(IBorrowBookControl.BorrowControlState.FINALISING, state);
+		assertEquals(patron, patronRef);
+		assertTrue(pendingLoans.size() == 1);
+		ILoan hobbitLoan = pendingLoans.get(0);
+		assertTrue(hobbitLoan.getBook().isAvailable());
+
 		// act
+		borrowBookControl.commitLoans();
+		state = ((BorrowBookControl) borrowBookControl).getState();
 		
 		// assert
-		fail("Not yet implemented");
+		assertEquals(IBorrowBookControl.BorrowControlState.COMPLETED, state);
 	}
+	
+	@Test
+	void commitLoans_ValidPreconditions_CallsSetCompleted() {
+		// arrange
+		int patronId = patron.getId();
+		borrowBookControl.cardSwiped(patronId);
+		int theHobbitId = bookTheHobbit.getId();
+		borrowBookControl.bookScanned(theHobbitId);
+		borrowBookControl.borrowingCompleted();
+		BorrowBookControl controlImpl = (BorrowBookControl) borrowBookControl;
+		IBorrowBookControl.BorrowControlState state = controlImpl.getState();
+		IPatron patronRef = controlImpl.getCurrentPatron();
+		List<ILoan> pendingLoans = controlImpl.getPendingLoans();
+		
+		
+		assertEquals(IBorrowBookControl.BorrowControlState.FINALISING, state);
+		assertEquals(patron, patronRef);
+		assertTrue(pendingLoans.size() == 1);
+		ILoan hobbitLoan = pendingLoans.get(0);
+		assertTrue(hobbitLoan.getBook().isAvailable());
+
+		// act
+		borrowBookControl.commitLoans();
+		state = ((BorrowBookControl) borrowBookControl).getState();
+		
+		// assert
+		verify(borrowBookUI).setCompleted();
+	}
+	
+	@Test
+	void commitLoans_ValidPreconditions_AddsLoanToCurrentLoans() {
+		// arrange
+		int patronId = patron.getId();
+		borrowBookControl.cardSwiped(patronId);
+		int theHobbitId = bookTheHobbit.getId();
+		borrowBookControl.bookScanned(theHobbitId);
+		borrowBookControl.borrowingCompleted();
+		BorrowBookControl controlImpl = (BorrowBookControl) borrowBookControl;
+		IBorrowBookControl.BorrowControlState state = controlImpl.getState();
+		IPatron patronRef = controlImpl.getCurrentPatron();
+		List<ILoan> pendingLoans = controlImpl.getPendingLoans();
+		
+		assertEquals(IBorrowBookControl.BorrowControlState.FINALISING, state);
+		assertEquals(patron, patronRef);
+		assertTrue(pendingLoans.size() == 1);
+		ILoan hobbitLoan = pendingLoans.get(0);
+		assertTrue(hobbitLoan.getBook().isAvailable());
+		
+		List<ILoan> currentLoans = library.getCurrentLoansList();
+		assertEquals(0, currentLoans.size());
+
+		// act
+		borrowBookControl.commitLoans();
+		currentLoans = library.getCurrentLoansList();
+		
+		// assert
+		assertEquals(1, currentLoans.size());
+		assertEquals(hobbitLoan, currentLoans.get(0));
+	}
+	
+	@Test
+	void commitLoans_ValidPreconditions_AddsLoanToAllLoans() {
+		// arrange
+		int patronId = patron.getId();
+		borrowBookControl.cardSwiped(patronId);
+		int theHobbitId = bookTheHobbit.getId();
+		borrowBookControl.bookScanned(theHobbitId);
+		borrowBookControl.borrowingCompleted();
+		BorrowBookControl controlImpl = (BorrowBookControl) borrowBookControl;
+		IBorrowBookControl.BorrowControlState state = controlImpl.getState();
+		IPatron patronRef = controlImpl.getCurrentPatron();
+		List<ILoan> pendingLoans = controlImpl.getPendingLoans();
+		
+		assertEquals(IBorrowBookControl.BorrowControlState.FINALISING, state);
+		assertEquals(patron, patronRef);
+		assertTrue(pendingLoans.size() == 1);
+		ILoan hobbitLoan = pendingLoans.get(0);
+		assertTrue(hobbitLoan.getBook().isAvailable());
+		
+		List<ILoan> allLoans = library.getAllLoansList();
+		assertEquals(0, allLoans.size());
+
+		// act
+		borrowBookControl.commitLoans();
+		allLoans = library.getAllLoansList();
+		
+		// assert
+		assertEquals(1, allLoans.size());
+		assertEquals(hobbitLoan, allLoans.get(0));
+	}
+	
+	@Test
+	void commitLoans_ValidPreconditions_AddsLoanPatronBorrowingRecord() {
+		// arrange
+		int patronId = patron.getId();
+		borrowBookControl.cardSwiped(patronId);
+		int theHobbitId = bookTheHobbit.getId();
+		borrowBookControl.bookScanned(theHobbitId);
+		borrowBookControl.borrowingCompleted();
+		BorrowBookControl controlImpl = (BorrowBookControl) borrowBookControl;
+		IBorrowBookControl.BorrowControlState state = controlImpl.getState();
+		IPatron patronRef = controlImpl.getCurrentPatron();
+		List<ILoan> pendingLoans = controlImpl.getPendingLoans();
+		
+		assertEquals(IBorrowBookControl.BorrowControlState.FINALISING, state);
+		assertEquals(patron, patronRef);
+		assertTrue(pendingLoans.size() == 1);
+		ILoan hobbitLoan = pendingLoans.get(0);
+		assertTrue(hobbitLoan.getBook().isAvailable());
+		
+		List<ILoan> patronLoans = patron.getLoans();
+		assertEquals(0, patronLoans.size());
+
+		// act
+		borrowBookControl.commitLoans();
+		patronLoans = library.getAllLoansList();
+		
+		// assert
+		assertEquals(1, patronLoans.size());
+		assertEquals(hobbitLoan, patronLoans.get(0));
+	}
+	
+	@Test
+	void commitLoans_ValidPreconditions_LoanStateIsCurrent() {
+		// arrange
+		int patronId = patron.getId();
+		borrowBookControl.cardSwiped(patronId);
+		int theHobbitId = bookTheHobbit.getId();
+		borrowBookControl.bookScanned(theHobbitId);
+		borrowBookControl.borrowingCompleted();
+		BorrowBookControl controlImpl = (BorrowBookControl) borrowBookControl;
+		IBorrowBookControl.BorrowControlState state = controlImpl.getState();
+		IPatron patronRef = controlImpl.getCurrentPatron();
+		List<ILoan> pendingLoans = controlImpl.getPendingLoans();
+		
+		assertEquals(IBorrowBookControl.BorrowControlState.FINALISING, state);
+		assertEquals(patron, patronRef);
+		assertTrue(pendingLoans.size() == 1);
+		ILoan hobbitLoan = pendingLoans.get(0);
+		assertTrue(hobbitLoan.getBook().isAvailable());
+
+		// act
+		borrowBookControl.commitLoans();
+		
+		// assert
+		assertTrue(hobbitLoan.isCurrent());
+	}
+	
+	@Test
+	void commitLoans_ValidPreconditions_BookIsOnLoan() {
+		// arrange
+		int patronId = patron.getId();
+		borrowBookControl.cardSwiped(patronId);
+		int theHobbitId = bookTheHobbit.getId();
+		borrowBookControl.bookScanned(theHobbitId);
+		borrowBookControl.borrowingCompleted();
+		BorrowBookControl controlImpl = (BorrowBookControl) borrowBookControl;
+		IBorrowBookControl.BorrowControlState state = controlImpl.getState();
+		IPatron patronRef = controlImpl.getCurrentPatron();
+		List<ILoan> pendingLoans = controlImpl.getPendingLoans();
+		
+		assertEquals(IBorrowBookControl.BorrowControlState.FINALISING, state);
+		assertEquals(patron, patronRef);
+		assertTrue(pendingLoans.size() == 1);
+		ILoan hobbitLoan = pendingLoans.get(0);
+		assertTrue(hobbitLoan.getBook().isAvailable());
+
+		// act
+		borrowBookControl.commitLoans();
+		
+		// assert
+		assertTrue(hobbitLoan.getBook().isOnLoan());
+	}
+	
+	@Test
+	void commitLoans_ValidPreconditions_UpdatesUI() {
+		// arrange
+		int patronId = patron.getId();
+		borrowBookControl.cardSwiped(patronId);
+		int theHobbitId = bookTheHobbit.getId();
+		borrowBookControl.bookScanned(theHobbitId);
+		borrowBookControl.borrowingCompleted();
+		BorrowBookControl controlImpl = (BorrowBookControl) borrowBookControl;
+		IBorrowBookControl.BorrowControlState state = controlImpl.getState();
+		IPatron patronRef = controlImpl.getCurrentPatron();
+		List<ILoan> pendingLoans = controlImpl.getPendingLoans();
+		
+		assertEquals(IBorrowBookControl.BorrowControlState.FINALISING, state);
+		assertEquals(patron, patronRef);
+		assertTrue(pendingLoans.size() == 1);
+		ILoan hobbitLoan = pendingLoans.get(0);
+		assertTrue(hobbitLoan.getBook().isAvailable());
+		
+		String expected = "Completed Loan Slip";
+
+		// act
+		borrowBookControl.commitLoans();
+		
+		// assert
+		verify(borrowBookUI, times(5)).display(displayStrings.capture());
+		assertEquals(expected, displayStrings.getAllValues().get(3));
+		assertEquals(hobbitLoan, displayStrings.getAllValues().get(4));
+	}
+	
+	@Test
+	void commitLoans_NotIsStateFinalising_ThrowsException() {
+		// arrange
+		int patronId = patron.getId();
+		borrowBookControl.cardSwiped(patronId);
+		int theHobbitId = bookTheHobbit.getId();
+		borrowBookControl.bookScanned(theHobbitId);
+		BorrowBookControl controlImpl = (BorrowBookControl) borrowBookControl;
+		IBorrowBookControl.BorrowControlState state = controlImpl.getState();
+		IPatron patronRef = controlImpl.getCurrentPatron();
+		List<ILoan> pendingLoans = controlImpl.getPendingLoans();
+		
+		assertNotEquals(IBorrowBookControl.BorrowControlState.FINALISING, state);
+		assertEquals(patron, patronRef);
+		assertTrue(pendingLoans.size() == 1);
+		ILoan hobbitLoan = pendingLoans.get(0);
+		assertTrue(hobbitLoan.getBook().isAvailable());
+
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> { borrowBookControl.commitLoans(); } );
+		
+		// assert
+		assertEquals(RuntimeException.class, thrown.getClass());
+	}
+	
+	@Test
+	void commitLoans_BookNoLongerAvailable_ThrowsException() {
+		// arrange
+		int patronId = patron.getId();
+		borrowBookControl.cardSwiped(patronId);
+		int theHobbitId = bookTheHobbit.getId();
+		borrowBookControl.bookScanned(theHobbitId);
+		BorrowBookControl controlImpl = (BorrowBookControl) borrowBookControl;
+		IBorrowBookControl.BorrowControlState state = controlImpl.getState();
+		IPatron patronRef = controlImpl.getCurrentPatron();
+		List<ILoan> pendingLoans = controlImpl.getPendingLoans();
+		
+		assertNotEquals(IBorrowBookControl.BorrowControlState.FINALISING, state);
+		assertEquals(patron, patronRef);
+		assertTrue(pendingLoans.size() == 1);
+		ILoan hobbitLoan = pendingLoans.get(0);
+		bookTheHobbit.borrowFromLibrary();
+		assertFalse(hobbitLoan.getBook().isAvailable());
+
+		// act
+		RuntimeException thrown = assertThrows(RuntimeException.class, 
+				() -> { borrowBookControl.commitLoans(); } );
+		
+		// assert
+		assertEquals(RuntimeException.class, thrown.getClass());
+	}
+
 
 }
